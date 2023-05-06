@@ -204,11 +204,11 @@ void selection_sort_v1(int array[], int n)
 
 void selection_sort_v2(int array[], int n)
 {
-    for (int j = 0; j < n; j++)
+    for (int j = 0; j < n / 2; j++)
     {
-        int maior = j, menor = j;
+        int maior = n - j, menor = j;
 
-        for (int i = j; i < n; i++)
+        for (int i = j; i < n - j; i++)
         {
             if (array[maior] < array[i])
             {
@@ -220,13 +220,13 @@ void selection_sort_v2(int array[], int n)
             }
         }
 
-        if (maior == j && menor == n - 1)
+        if (maior == j && menor == n - 1 - j)
         {
             swap(&array[maior], &array[menor]);
         }
         else
         {
-            swap(&array[maior], &array[n - 1]);
+            swap(&array[maior], &array[n - 1 - j]);
             swap(&array[menor], &array[j]);
         }
     }
@@ -298,9 +298,9 @@ int main()
     // bubble_sort_v1(array, n);
     // bubble_sort_v2(array, n);
     // selection_sort_v1(array, n);
-    // selection_sort_v2(array, n);
+     selection_sort_v2(array, n);
     // insert_sort_v1 (array, n);
-    insert_sort_v2 (array, n);
+    //insert_sort_v2 (array, n);
     // shell_sort_v1(array, n);
     // shell_sort_v2(array, n);
     // radix_sort(array, n);
