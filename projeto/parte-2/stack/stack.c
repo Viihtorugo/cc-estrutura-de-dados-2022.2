@@ -30,6 +30,12 @@ stack *push (stack *top, int elem)
 
 int pop (stack **top)
 {
+    if (is_empty(*top))
+    {
+        printf("Erro: a pilha esta vazia!\n");
+        exit(1);
+    }
+
     stack *aux = *top;
     int r = aux->elem;
 
@@ -98,7 +104,7 @@ int main ()
 
     stack *player_a = NULL;
     stack *player_b = NULL;
-    
+
     printf("Digite %d numeros: ", n);
     int elem;
 
