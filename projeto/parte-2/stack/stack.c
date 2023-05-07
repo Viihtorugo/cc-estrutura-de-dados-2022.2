@@ -130,15 +130,15 @@ int main ()
 
         if (a > b)
         {
-            size_a -= 1;
+            size_b -= 1;
             printf("1 - jogador A ganhou a rodada!\n");
-            player_b = push(player_b, b);
+            player_a = push(player_a, a);
         }
         else if (a < b)
         {
-            size_b -= 1;
+            size_a -= 1;
             printf("2 - jogador B ganhou a rodada!\n");
-            player_a = push(player_a, a);
+            player_b = push(player_b, b);
         }
         else
         {
@@ -156,11 +156,11 @@ int main ()
     }
     else if (player_a == NULL)
     {
-        printf("Jogador A ganhou a partida!\n");
+        printf("Jogador B ganhou a partida!\n");
     }
     else
     {
-        printf("Jogador B ganhou a partida!\n");
+        printf("Jogador A ganhou a partida!\n");
     }
 
     return 0;
