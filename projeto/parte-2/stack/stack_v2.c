@@ -2,19 +2,20 @@
 #include <stdlib.h>
 #include <time.h>
 
-typedef struct stack{
+typedef struct stack
+{
     int elem;
     struct stack *next;
 } stack;
 
-int is_empty (stack *top)
+int is_empty(stack *top)
 {
-    return (int) (top == NULL);
+    return (int)(top == NULL);
 }
 
-stack *push (stack *top, int elem)
+stack *push(stack *top, int elem)
 {
-    stack *new_top = (stack *) malloc (sizeof(stack));
+    stack *new_top = (stack *)malloc(sizeof(stack));
 
     if (is_empty(new_top))
     {
@@ -28,7 +29,7 @@ stack *push (stack *top, int elem)
     return new_top;
 }
 
-int pop (stack **top)
+int pop(stack **top)
 {
     if (is_empty(*top))
     {
@@ -47,7 +48,7 @@ int pop (stack **top)
     return r;
 }
 
-int count_stack (stack *top)
+int count_stack(stack *top)
 {
     stack *aux = top;
     int count = 0;
@@ -61,7 +62,7 @@ int count_stack (stack *top)
     return count;
 }
 
-stack *shuffle (stack *top, int size)
+stack *shuffle(stack *top, int size)
 {
     stack *new_top = NULL;
 
@@ -75,47 +76,95 @@ stack *shuffle (stack *top, int size)
             aux = push(aux, pop(&top));
             r -= 1;
         }
-        
+
         new_top = push(new_top, pop(&aux));
-        
+
         while (aux != NULL)
             top = push(top, pop(&aux));
-        
+
         size -= 1;
     }
-    
+
     return new_top;
 }
 
-int main ()
+void print_cartas (stack *topo)
+{
+    stack *aux = topo;
+
+    while (aux != NULL)
+    {
+        printf("%d ", aux->elem);
+        aux = aux->next;
+    }
+
+    printf("\n");
+}
+
+int main()
 {
     srand(time(NULL));
-    
+
     int n = 0;
 
-    while (n <= 0 || n > 100)
+    while (n <= 0 || n > 53)
     {
         printf("Digite a quantidade de cartas: ");
         scanf("%d", &n);
 
-        if (n <= 0 || n > 100)
-            printf("O numero de cartas deve ser maior que 0 e menor que 101!\n");
+        if (n <= 0 || n > 53)
+            printf("\nErro: Um baralho possui no máximo 52 cartas e o minimo é 1 carta!\n\n");
+    }
+
+    int cartas[n], num[13] = {0};
+
+    for (int i = 0; i < n; i++)
+    {
+        int elem, erro = 0;
+
+        while (1)
+        {
+            printf("Digite o número da carta: ");
+            scanf("%d", &elem);
+
+            if (elem > 0 && elem < 14 && num[elem] != 4)
+            {
+                break;
+            }
+            else
+            {
+                erro = 1;
+                printf("\nPossíveis erros:\n");
+                printf("1 - Numeração das cartas de um baralho é de 1 até 13!\n");
+                printf("2 - Um baralho só pode ter 4 cartas com a mesma numeração!\n\n");
+            }
+        }
+
+        if (erro)
+        {
+            for (int j = 0; j < 13; j++)
+                num[j] = 0;
+            
+            i = 0;
+        }
+        else
+        {
+            num[elem] += 1;
+            cartas[i] = elem;
+        }
     }
 
     stack *player_a = NULL;
     stack *player_b = NULL;
 
-    printf("Digite %d numeros: ", n);
-    int elem;
-
     for (int i = 0; i < n; i++)
     {
-        scanf("%d", &elem);
-        player_a = push(player_a, elem);
-        player_b = push(player_b, elem);
+        player_a = push(player_a, cartas[i]);
+        player_b = push(player_b, cartas[i]);
     }
-    
-    int size_a = count_stack(player_a), size_b = count_stack(player_b);;
+
+    int size_a = count_stack(player_a), size_b = count_stack(player_b);
+    ;
 
     printf("\n------\n");
     while (player_a != NULL && player_b != NULL)
@@ -149,7 +198,7 @@ int main ()
         printf("\n");
     }
     printf("------\n\n");
-    
+
     if (player_a == NULL && player_b == NULL)
     {
         printf("Empate!\n");
