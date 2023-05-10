@@ -107,13 +107,16 @@ int main()
 
     int n = 0;
 
-    while (n <= 0 || n > 53)
+    while (n <= 0 || n > 52)
     {
         printf("Digite a quantidade de cartas: ");
         scanf("%d", &n);
 
         if (n <= 0 || n > 53)
+        {
             printf("\nErro: Um baralho possui no máximo 52 cartas e o minimo é 1 carta!\n\n");
+            printf("---- Recomeçando --- \n\n");
+        }
     }
 
     int cartas[n], num[13] = {0};
@@ -137,6 +140,7 @@ int main()
                 printf("\nPossíveis erros:\n");
                 printf("1 - Numeração das cartas de um baralho é de 1 até 13!\n");
                 printf("2 - Um baralho só pode ter 4 cartas com a mesma numeração!\n\n");
+                printf("---- Recomeçando --- \n\n");
             }
         }
 

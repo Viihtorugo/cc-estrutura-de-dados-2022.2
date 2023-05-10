@@ -81,7 +81,9 @@ stack *embaralhar (stack *top)
 
 int main ()
 {
-	//falta tratar o erro
+	//falta tratamento de entrada, um baralho só pode ter 52 duas
+	//além de que não pode ter mais de 4 cartas repetidas
+
 	printf("Digiteo o numero de cartas: ");
 	int n;
 	scanf("%d", &n);
@@ -125,14 +127,14 @@ int main ()
 		}
 	}
 	
-	//Saida errada
+	//Saída não considerou empate, além de que quem ganha é quem ficou com cartas no baralho
 	if (baralho_a == NULL)
 	{
-		printf("Jogador A eh o vencendor\n");
+		printf("Jogador A é o vencendor\n");
 	}
 	else
 	{
-		printf("Jogador B eh o vencendor\n");
+		printf("Jogador B é o vencendor\n");
 	}	
 		
 	return 0;
