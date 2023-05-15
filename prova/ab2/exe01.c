@@ -172,20 +172,37 @@ void bubble_sort_v2(int array[], int n)
 {
     int j = 0;
 
+    int count = 0;
+    int aux = n;
+    
     while (j < n)
     {
-        for (int i = j; i < n; i++)
-            if (i + 1 != n && array[i] > array[i + 1])
+        int i = j;
+        int k = n - 1;
+        while ((i < n) && (i + 1 != n) && (k > j) && (k - 1 >= j))
+        {
+            if (array[i] > array[i + 1])
                 swap(&array[i], &array[i + 1]);
 
+            if (array[k] < array[k - 1])
+                swap(&array[k], &array[k - 1]);
+            
+            i += 1;
+            k -= 1;
+            count += 1;
+        }
+
+        for (int i = 0; i < aux; i++)
+            printf("%d ", array[i]);
+
+        printf("-> ordenando\n");
+
         n--;
-
-        for (int i = n - 1; i > j; i--)
-            if (i - 1 >= j && array[i] < array[i - 1])
-                swap(&array[i], &array[i - 1]);
-
         j++;
     }
+    
+    
+    printf("count = %d\n", count);
 }
 
 void selection_sort_v1(int array[], int n)
@@ -249,7 +266,7 @@ void insert_sort_v1(int array[], int n)
     }
 }
 
-void insert_sort_v2 (int array[], int n)
+void insert_sort_v2(int array[], int n)
 {
     for (int i = 1; i < n; i++)
     {
@@ -265,7 +282,6 @@ void insert_sort_v2 (int array[], int n)
         array[j + 1] = temp;
     }
 }
-
 
 int main()
 {
@@ -296,11 +312,11 @@ int main()
     */
 
     // bubble_sort_v1(array, n);
-    // bubble_sort_v2(array, n);
+    bubble_sort_v2(array, n);
     // selection_sort_v1(array, n);
-     selection_sort_v2(array, n);
+    // selection_sort_v2(array, n);
     // insert_sort_v1 (array, n);
-    //insert_sort_v2 (array, n);
+    // insert_sort_v2 (array, n);
     // shell_sort_v1(array, n);
     // shell_sort_v2(array, n);
     // radix_sort(array, n);
