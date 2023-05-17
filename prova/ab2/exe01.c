@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 void swap(int *x, int *y)
 {
@@ -8,12 +9,7 @@ void swap(int *x, int *y)
     *y = aux;
 }
 
-int pot(int x, int n)
-{
-    return (n == 0) ? 1 : x * pot(x, n - 1);
-}
-
-void quick_sort(int array[], int i, int n, int tam)
+void quick_sort_v1(int array[], int i, int n, int tam)
 {
     if (n > i)
     {
@@ -36,16 +32,127 @@ void quick_sort(int array[], int i, int n, int tam)
 
         swap(&array[i], &array[r]);
 
-        quick_sort(array, i, r - 1, tam);
-        quick_sort(array, r + 1, n, tam);
+        quick_sort_v1(array, i, r - 1, tam);
+        quick_sort_v1(array, r + 1, n, tam);
     }
 }
 
-void bin_sort(int array[], int n)
+void quick_sort_v2(int array[], int i, int n, int tam)
 {
-    for (int i = 0; i < n / 2; i++)
+
+    if (n > i)
+    {
+        int l = i, r = n;
+
+        if (r == tam)
+            r -= 1;
+
+        printf("teste 1\n");
+        
+        int cal = (l - r + 1) + l;
+        
+        if (cal == 0)
+            cal += 1;
+
+        if (cal == 1)
+            cal += 1;
+            
+        printf("(l - r + 1) + l = %d\n", (l - r + 1) + l);
+        int pivot_index = rand() % cal;
+        printf("pivo= %d\n", pivot_index);
+        printf("teste 2\n");
+
+        if (pivot_index != i)
+            swap(&array[pivot_index], &array[i]);
+
+        for (int k = 0; k < tam; k++)
+            printf("%d ", array[k]);
+
+        printf("-> ordenando\n");
+
+        while (l < r)
+        {
+            while (array[l] <= array[i] && l < n)
+                l += 1;
+
+            while (array[r] > array[i] && r >= 0)
+                r -= 1;
+
+            if (l < r)
+                swap(&array[l], &array[r]);
+        }
+        
+        swap(&array[i], &array[r]);
+
+        quick_sort_v2(array, i, r - 1, tam);
+        //quick_sort_v2(array, r + 1, n, tam);
+    }
+}
+
+void bin_sort_v1(int array[], int n)
+{
+    for (int i = 0; i < n; i++)
         while (array[i] != i)
             swap(&array[i], &array[array[i]]);
+}
+
+typedef struct list
+{
+    int elem;
+    struct list *next;
+} list;
+
+void bin_sort_v2(int array[], int n)
+{
+    list *l[10];
+
+    for (int i = 0; i < 10; i++)
+        l[i] = NULL;
+
+    for (int i = 0; i < n; i++)
+    {
+        int index = array[i] / 10;
+
+        list *aux = l[index];
+        list *previous = NULL;
+
+        while (aux != NULL && array[i] > aux->elem)
+        {
+            previous = aux;
+            aux = aux->next;
+        }
+
+        list *new_node = (list *)malloc(sizeof(list));
+
+        if (new_node == NULL)
+            exit(1);
+
+        new_node->elem = array[i];
+        new_node->next = aux;
+
+        if (previous != NULL)
+        {
+            previous->next = new_node;
+        }
+        else
+        {
+            l[index] = new_node;
+        }
+    }
+
+    int array_index = 0;
+
+    for (int i = 0; i < 10 && array_index < n; i++)
+    {
+        list *aux = l[i];
+
+        while (aux != NULL)
+        {
+            array[array_index] = aux->elem;
+            array_index += 1;
+            aux = aux->next;
+        }
+    }
 }
 
 void merge(int array[], int l, int pivot, int r, int tam)
@@ -112,7 +219,7 @@ void radix_sort(int array[], int n)
         int output[n];
         int i, count[10] = {0};
 
-        // frequencia que do intervalo [0, 9]
+        // frequencia que do numero no intervalo [0, 9]
         for (i = 0; i < n; i++)
             count[(array[i] / exp) % 10]++;
 
@@ -120,11 +227,11 @@ void radix_sort(int array[], int n)
         for (i = 1; i < 10; i++)
             count[i] += count[i - 1];
 
-        printf("count com output: ");
+        /*printf("count com output: ");
         for (int i = 0; i < 10; i++)
             printf("%d ", count[i]);
 
-        printf("\n");
+        printf("\n");*/
 
         // construindo saida
         for (i = n - 1; i >= 0; i--)
@@ -136,11 +243,11 @@ void radix_sort(int array[], int n)
         for (i = 0; i < n; i++)
             array[i] = output[i];
 
-        printf("ordenando: ");
+        /*printf("ordenando: ");
         for (int i = 0; i < n; i++)
             printf("%d ", array[i]);
 
-        printf("\n");
+        printf("\n");*/
     }
 }
 
@@ -154,10 +261,27 @@ void shell_sort_v1(int array[], int n)
 
 void shell_sort_v2(int array[], int n)
 {
-    for (int i = n / 2; i > 0; i--)
-        for (int j = 0; (j < n) && (j + i != n); j++)
-            if (array[j] > array[j + i])
-                swap(&array[j], &array[j + i]);
+    int h;
+    for (h = 1; h < n; h = 3 * h + 1);
+
+    while (h > 0)
+    {
+        h = (h - 1) / 3;
+        for (int i = h; i < n; i++)
+        {
+            int aux = array[i];
+            int j = i;
+
+            while (array[j - h] > aux)
+            {
+                array[j] = array[j - h];
+                j -= h;
+                if (j < h)
+                    break;
+            }
+            array[j] = aux;
+        }
+    }
 }
 
 void bubble_sort_v1(int array[], int n)
@@ -170,39 +294,17 @@ void bubble_sort_v1(int array[], int n)
 
 void bubble_sort_v2(int array[], int n)
 {
-    int j = 0;
-
-    int count = 0;
-    int aux = n;
-    
-    while (j < n)
+    for (int i = 0; i < n / 2; i++)
     {
-        int i = j;
-        int k = n - 1;
-        while ((i < n) && (i + 1 != n) && (k > j) && (k - 1 >= j))
+        for (int j = n - i - 1; j > i; j--)
         {
-            if (array[i] > array[i + 1])
-                swap(&array[i], &array[i + 1]);
+            if (array[j - 1] > array[j])
+                swap(&array[j - 1], &array[j]);
 
-            if (array[k] < array[k - 1])
-                swap(&array[k], &array[k - 1]);
-            
-            i += 1;
-            k -= 1;
-            count += 1;
+            if (array[n - j] < array[n - j - 1])
+                swap(&array[n - j], &array[n - j - 1]);
         }
-
-        for (int i = 0; i < aux; i++)
-            printf("%d ", array[i]);
-
-        printf("-> ordenando\n");
-
-        n--;
-        j++;
     }
-    
-    
-    printf("count = %d\n", count);
 }
 
 void selection_sort_v1(int array[], int n)
@@ -223,7 +325,7 @@ void selection_sort_v2(int array[], int n)
 {
     for (int j = 0; j < n / 2; j++)
     {
-        int maior = n - j, menor = j;
+        int maior = n - j - 1, menor = j;
 
         for (int i = j; i < n - j; i++)
         {
@@ -251,47 +353,54 @@ void selection_sort_v2(int array[], int n)
 
 void insert_sort_v1(int array[], int n)
 {
-    for (int i = 0; i < n; i++)
+    for (int i = 1; i < n; i++)
     {
-        if (i + 1 != n && array[i] > array[i + 1])
+        int j = i;
+        while (j >= 1 && array[j - 1] > array[j])
         {
-            int j = i + 1;
-
-            while (j - 1 != -1 && array[j] < array[j - 1])
-            {
                 swap(&array[j], &array[j - 1]);
                 j -= 1;
-            }
         }
     }
 }
 
 void insert_sort_v2(int array[], int n)
 {
-    for (int i = 1; i < n; i++)
+    for (int i = 1; i <= n / 2; i++)
     {
-        int temp = array[i];
-        int j = i - 1;
+        int j = n - i;
+        int aux = j;
 
-        while (j >= 0 && temp < array[j])
+        while (j >= i)
         {
-            array[j + 1] = array[j];
+            if (array[j - 1] > array[j])
+                swap(&array[j - 1], &array[j]);
+
+            if (array[j] > array[aux])
+                aux = j;
+
             j -= 1;
         }
 
-        array[j + 1] = temp;
+        if (aux != n - i)
+            swap(&array[aux], &array[n - i]);
     }
 }
 
 int main()
 {
+    srand(time(NULL));
+
     int n;
     scanf("%d", &n);
 
     int array[n];
 
     for (int i = 0; i < n; i++)
-        scanf("%d", &array[i]);
+    {
+         array[i] = rand() % n;
+        // scanf("%d", &array[i]);
+    }
 
     for (int i = 0; i < n; i++)
         printf("%d ", array[i]);
@@ -312,17 +421,19 @@ int main()
     */
 
     // bubble_sort_v1(array, n);
-    bubble_sort_v2(array, n);
+    // bubble_sort_v2(array, n);
     // selection_sort_v1(array, n);
     // selection_sort_v2(array, n);
     // insert_sort_v1 (array, n);
-    // insert_sort_v2 (array, n);
+     insert_sort_v2 (array, n);
     // shell_sort_v1(array, n);
     // shell_sort_v2(array, n);
     // radix_sort(array, n);
-    // quick_sort(array, 0, n, n);
+    // quick_sort_v1(array, 0, n, n);
+    // quick_sort_v2(array, 0, n, n);
     // merge_sort(array, 0, n - 1, n);
-    // bin_sort(array, n);
+    // bin_sort_v1(array, n);
+    // bin_sort_v2(array, n);
 
     for (int i = 0; i < n; i++)
         printf("%d ", array[i]);

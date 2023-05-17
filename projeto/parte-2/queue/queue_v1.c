@@ -239,16 +239,16 @@ void inserir_paciente(queue *q, queue *aux, int j)
 
     while (1)
     {
-        printf("\nCaso não queria adicionar só digitar -> 0\n");
+        printf("\nCaso não queria adicionar só digitar, intervalo de 0 até 16 -> 0\n");
         printf("Quantos pacientes chegou: ");
         scanf("%d", &n);
 
-        if (n < 0)
+        if (n < 0 || n > 16)
         {
             printf("\n-----ERRO----\n");
 
             if (n < 0)
-                printf("\nO sistema não suporta números negativo!\n");
+                printf("\nO sistema não suporta números negativo numeros ou acima de 16!\n\n\n");
         }
         else
         {
@@ -349,12 +349,14 @@ int main()
     while (1)
     {
         printf("\n-------- INICIO DO EXPEDIENTE -------\n");
+        int array[16];
 
         for (int i = 0; i < 16; i++)
         {
             inserir_paciente(q, aux, i);
             int idade = dequeue(q);
 
+            array[i] = idade;
             if (idade == -1)
             {
                 printf("\n---- %d consulta: sem paciente ----\n", i + 1);
@@ -377,6 +379,21 @@ int main()
         }
 
         printf("\n----FIM DO EXPEDIENTE----\n");
+
+        printf("\n------ FILA HOJE -----\n\n");
+        for (int i = 0; i < 16; i++)
+        {
+            if (array[i] == -1)
+            {
+                printf("Paciente %d: não houve\n", 1 + 1);
+            }
+            else
+            {
+                printf("Paciente %d: %d ano(s)\n", i + 1, array[i]);
+            }
+        }
+        printf("\n");
+        
 
         for (int i = 0; i < q->size_max; i++)
             q->array[i] = -1;

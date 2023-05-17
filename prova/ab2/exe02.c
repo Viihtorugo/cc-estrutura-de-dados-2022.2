@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 typedef struct list_adj
 {
@@ -159,6 +160,7 @@ graph *create_graph (int size)
 void add_vertex (int x, int y, graph *g)
 {
     g->list_adj[x] = add_list_adj(y, g->list_adj[x]);
+    g->list_adj[y] = add_list_adj(x, g->list_adj[y]);
 }
 
 void dfs (graph *g, int v, int count)
@@ -281,72 +283,32 @@ void bfs (graph *g, int v, int d)
 {
     queue *q = NULL;
     enqueue(v, &q);
-    g->visited[v] = 1;
 
     while (q != NULL)
     {
         int dequeued = dequeue(&q);
         list_adj *aux = g->list_adj[dequeued];
-        
-        printf("Iniciando busca em largura a partir de %d\n", dequeued);
+        g->visited[dequeued] = 1;
         
         while (aux != NULL)
         {
-
             if (g->visited[aux->v] == 0)
-            {
-                g->visited[aux->v] = 1;
                 enqueue(aux->v, &q);
-            }
             
             aux = aux->next;
         }
         
         print_queue(q);
     }
-
-    printf("\n");
-    for (int i = 0; i < g->size; i++)
-    {
-        printf("%d | ", i);
-
-        for (int i = 0; i < g->size; i++)
-            g->visited[i] = 0;
-
-        int count = bfs_count(g, v, i);
-
-        if (count == -1)
-        {
-            printf("- | ");
-        }
-        else
-        {
-            printf("%d | ", count);
-        }
-
-        if (count == -1)
-        {
-            printf("-\n");
-        }
-        else
-        {
-            printf("%d\n", count);
-        }
-    }
-
-    printf("\nCaminho entre %d e %d:", v, d);
-
-    printf("\n");
     
 }
 
 int main ()
 {
 
-    int n, m, e;
-    scanf("%d %d %d", &n, &m, &e);
+    int n, m;
+    scanf("%d %d", &n, &m);
     
-    printf("--------\n\n");
     if (n != 0)
     {
         graph *g = create_graph(n);
@@ -357,25 +319,9 @@ int main ()
             scanf("%d %d", &x, &y);
             add_vertex(x, y, g);
         }
-        for (int i = 0; i < e; i++)
-        {
-            int v, d;
-            scanf("%d %d", &v, &d);
 
-            printf("\n");
-            print_graph(g);
-            printf("\n");
-
-            for (int i = 0; i < g->size; i++)
-                g->visited[i] = 0;
-
-            printf("Caso de Teste #%d - BFS(%d)\n\n", i + 1, v);
-            //print_graph(0, g);
-            //dfs(g, 0, 0);
-            bfs(g, v, d);
-            printf("--------\n\n");
-        }
-
+        dfs(g, 0, 7);
+        bfs(g, 0, 7);
     }
 
     return 0;
