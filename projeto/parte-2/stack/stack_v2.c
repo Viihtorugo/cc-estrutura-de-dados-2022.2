@@ -13,6 +13,55 @@ int is_empty(stack *top)
     return (int)(top == NULL);
 }
 
+int get_number(char *string)
+{
+    int num = 0;
+
+    while (1)
+    {
+        char input[100];
+        printf("%s", string);
+        scanf(" %[^\n]s", input);
+
+        int erro = 0, i = 0;
+
+        while (input[i] != '\0')
+        {
+            if (input[i] == '0' ||
+                input[i] == '1' ||
+                input[i] == '2' ||
+                input[i] == '3' ||
+                input[i] == '4' ||
+                input[i] == '5' ||
+                input[i] == '6' ||
+                input[i] == '7' ||
+                input[i] == '8' ||
+                input[i] == '9')
+            {
+                num = (num * 10) + ((int) input[i]) % 48;
+                i += 1;
+            }
+            else
+            {
+                erro = 1;
+                break;
+            }
+        }
+
+        if (erro)
+        {
+            printf("\n----- ERRO -----\n");
+            printf("Entrada invalida, digite apenas números\n\n");
+        }
+        else
+        {
+            break;
+        }
+    }
+
+    return num;
+}
+
 stack *push(stack *top, int elem)
 {
     stack *new_top = (stack *)malloc(sizeof(stack));
@@ -88,7 +137,7 @@ stack *shuffle(stack *top, int size)
     return new_top;
 }
 
-void print_cartas (stack *topo)
+void print_cartas(stack *topo)
 {
     stack *aux = topo;
 
@@ -107,54 +156,44 @@ int main()
 
     int n = 0;
 
-    while (n <= 0 || n > 52)
+    while (1)
     {
-        printf("Digite a quantidade de cartas: ");
-        scanf("%d", &n);
+        n = get_number("Digite a quantidade de cartas: ");
 
         if (n <= 0 || n > 53)
         {
-            printf("\nErro: Um baralho possui no máximo 52 cartas e o minimo é 1 carta!\n\n");
-            printf("---- Recomeçando --- \n\n");
-        }
-    }
-
-    int cartas[n], num[13] = {0};
-
-    for (int i = 0; i < n; i++)
-    {
-        int elem, erro = 0;
-
-        while (1)
-        {
-            printf("Digite o número da carta: ");
-            scanf("%d", &elem);
-
-            if (elem > 0 && elem < 14 && num[elem] != 4)
-            {
-                break;
-            }
-            else
-            {
-                erro = 1;
-                printf("\nPossíveis erros:\n");
-                printf("1 - Numeração das cartas de um baralho é de 1 até 13!\n");
-                printf("2 - Um baralho só pode ter 4 cartas com a mesma numeração!\n\n");
-                printf("---- Recomeçando --- \n\n");
-            }
-        }
-
-        if (erro)
-        {
-            for (int j = 0; j < 13; j++)
-                num[j] = 0;
-            
-            i = 0;
+            printf("\n----- Erro ---- \nUm baralho possui no máximo 52 cartas e o minimo é 1 carta!\n\n");
         }
         else
         {
-            num[elem] += 1;
+            break;
+        }
+    }
+
+    printf("\nOs baralhos tem %d carta(s)!\n", n);
+    int cartas[n], num[13] = {0}, i = 0, elem;
+
+    while (i < n)
+    {
+        printf("%d carta -> ", i + 1);
+        elem = get_number("Digite o valor da carta: ");
+
+        if ((elem >= 1 && elem <= 13) && num[elem - 1] != 4)
+        {
             cartas[i] = elem;
+            num[elem - 1] += 1;
+            i += 1;
+        }
+        else
+        {
+            printf("\nPossíveis erros:\n");
+            printf("1 - O valor das cartas de um baralho está no intervalo de 1 a 13!\n");
+            printf("2 - Um baralho só pode ter 4 cartas com a mesma valor!\n\n");
+            
+            for (int j = 0; j < 13; j++)
+                printf("Carta com valor %d possui %d carta(s) no baralho\n", j + 1, num[j]);
+
+            printf("\n");
         }
     }
 
@@ -175,6 +214,12 @@ int main()
     {
         player_a = shuffle(player_a, size_a);
         player_b = shuffle(player_b, size_b);
+
+        printf("Baralho A: ");
+        print_cartas(player_a);
+        printf("Baralho B: ");
+        print_cartas(player_b);
+        printf("\n");
 
         int a = pop(&player_a);
         int b = pop(&player_b);
