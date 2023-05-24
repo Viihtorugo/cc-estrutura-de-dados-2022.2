@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Tratamento de erro -> get_number()
+// Refatorado a parte da orgnização da fila e da lista
+// Criado o menu para o usuario
+
 int get_number(char *string)
 {
     int num = 0;
@@ -39,7 +43,7 @@ int get_number(char *string)
         if (erro)
         {
             printf("\n----- ERRO -----\n");
-            printf("Entrada invalida, digite apenas números\n\n");
+            printf("Entrada invalida, digite apenas números positivos ou zero\n\n");
         }
         else
         {
@@ -138,7 +142,7 @@ int enqueue(int elem, queue *q)
 {
     if (q->size == q->size_max)
     {
-        printf("Fila está cheia!\n");
+        printf("\nFila está cheia!\n");
         return 0;
     }
     else
@@ -178,7 +182,7 @@ int dequeue(queue *q)
 {
     if (q->size <= 0)
     {
-        printf("Fila está vazia!\n");
+        printf("\n\nFila está vazia!\n");
         return -1;
     }
     else
@@ -200,7 +204,7 @@ int remove_in_queue(int n, queue *q)
 {
     if (q->size == 0)
     {
-        printf("Filá está vazia!\n");
+        printf("Fila está vazia!\n");
         return -1;
     }
     else
@@ -222,26 +226,8 @@ int remove_in_queue(int n, queue *q)
     }
 }
 
-void remover_paciente(queue *q)
+void remover_paciente(queue *q, int n)
 {
-    int n = -1;
-
-    while (1)
-    {
-        printf("\nCaso não queria remover só digitar -> 0\n");
-        printf("Quantos pacientes desistiu quando estava na fila: ");
-        scanf("%d", &n);
-
-        if (n < 0 || n > q->size)
-        {
-            printf("\n-----ERRO----\n\nO sistema não suporta números negativo ou números acima de %d!\n", q->size);
-        }
-        else
-        {
-            break;
-        }
-    }
-
     for (int i = 0; i < n; i++)
     {
         int op = -1;
@@ -249,13 +235,14 @@ void remover_paciente(queue *q)
         while (1)
         {
 
-            printf("\n-----Fila----\n");
+            printf("\n-----Fila----\n\n");
 
             for (int i = 0; i < q->size; i++)
-                printf("Pessoa %d: %d anos\n", i + 1, q->array[i]);
+                printf("%d - Pessoa com %d ano(s)\n", i + 1, q->array[i]);
+            
+            printf("\n");
 
-            printf("Digite informe o numero da pessoa na fila: ");
-            scanf("%d", &op);
+            op = get_number("Digite informe o numero da pessoa na lista: ");
 
             if (op > 0 && op <= q->size)
             {
@@ -263,129 +250,256 @@ void remover_paciente(queue *q)
             }
             else
             {
-                printf("\n-----ERRO----\n\nDigite um número entre 1 até %d!\n", q->size);
+                printf("\n-----ERRO----\n\nDigite um número entre 1 e %d!\n\n", q->size);
             }
         }
 
-        if (remove_in_queue(op, q))
+        if (remove_in_queue(op, q) != -1)
         {
-            printf("\n");
-            print_queue(q);
+            printf("Pessoa removida com sucesso!\n\n");
         }
         else
         {
-            break;
+            printf("Erro ao remover a pessoa!\n\n");
         }
     }
 }
 
-void inserir_paciente(queue *q, queue *aux, int j)
+void inserir_paciente(queue *q, queue *aux, int j, int n, int v)
 {
-    int n = -1;
-
-    if (q->size + j >= q->size_max)
-        printf("\n---- NÃO POSSUI VAGA PARA HOJE!---\n");
-
-    while (1)
+    if (((j + q->size) != q->size_max) && v)
     {
-        printf("\nCaso não queria adicionar só digitar, intervalo de 0 até 16 -> 0\n");
-        printf("Quantos pacientes chegou: ");
-        scanf("%d", &n);
-
-        if (n < 0 || n > 16)
-        {
-            printf("\n-----ERRO----\n");
-
-            if (n < 0)
-                printf("\nO sistema não suporta números negativo numeros ou acima de 16!\n\n\n");
-        }
-        else
-        {
-            break;
-        }
-    }
-
-    if (n > 0)
-    {
-        int array[n];
-
-        printf("\nPara bebês recenascido digite 0!\n");
         for (int i = 0; i < n; i++)
         {
             int idade = -1;
 
             while (1)
             {
-                printf("Informe a idade do paciente %d: ", i + 1);
-                scanf("%d", &idade);
+                idade = get_number("Digite a idade do paciente (Para recém nascido digite 0): ");
 
                 if (idade < 0 || idade > 125)
                 {
-                    printf("\n-----ERRO----\n\nO sistema não suporta números negativo ou idade acima de 125 anos!\n");
+                    printf("\n-----ERRO----\n\n1 - O sistema não aceita número negativo;\n");
+                    printf("2 - O sistema pode adicionar idade de 0 a 125 anos.\n\n");
                 }
                 else
                 {
                     break;
                 }
             }
-            
-            array[i] = idade;
-        }
-        
-        for (int i = 0; i < n; i++)
-        {
-            if (q->size + j < q->size_max)
+
+            if (enqueue(idade, q))
             {
-                if (j > 8)
-                {
-                    if (prioridade(array[i]) == 2  && q->size + j + n >= q->size_max)
-                    {
-                        if (enqueue(array[i], aux))
-                        {
-                            printf("\n----- LISTA PARA OUTRO DIA -----\n\n");
-                            print_queue(aux);
-                        }
-                        else
-                        {
-                            printf("\n----- A LISTA PARA OUTRO DIA ESTÁ CHEIA -----\n");
-                        }
-                    }
-                    else
-                    {
-                        printf("\nPaciente adicionado: %d ano(s)!\n", array[i]);
-                        enqueue(array[i], q);
-                    }
-                }
-                else
-                {
-                    if (enqueue(array[i], q))
-                    {
-                        printf("\nPaciente adicionado: %d ano(s)!\n", array[i]);
-                        print_queue(q);
-                    }
-                    else
-                    {
-                        printf("\n--- ERRO ---!\n");
-                        exit(1);
-                    }
-                }
-                
+                printf("\nPaciente adicionado com sucesso na fila!\n\n");
             }
             else
             {
-                if (enqueue(array[i], aux))
-                {
-                    printf("\n----- LISTA PARA OUTRO DIA -----\n\n");
-                    print_queue(aux);
-                }
-                else
-                {
-                    printf("\n----- A LISTA PARA OUTRO DIA ESTÁ CHEIA -----\n");
-                }
+                printf("\nErro ao adicionar o paciente!\n\n");
             }
         }
     }
-    
+    else
+    {
+        for (int i = 0; i < n; i++)
+        {
+            int idade;
+
+            while (1)
+            {
+                idade = get_number("Digite a idade do paciente (Para recém nascido digite 0): ");
+
+                if (idade < 0 || idade > 125)
+                {
+                    printf("\n-----ERRO----\n\n1 - O sistema não aceita número negativo;\n");
+                    printf("2 - O sistema pode adicionar idade de 0 a 125 anos.\n\n");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (enqueue(idade, aux) )
+            {
+                printf("\nPaciente adicionado com sucesso na lista de espera!\n\n");
+            }
+            else
+            {
+                 printf("\nErro ao adicionar o paciente!\n\n");
+            }
+        }
+    }
+
+}
+
+void menu (queue *q, queue *aux, int i)
+{
+    while (1)
+    {
+        printf("\n\n---- MENU -----\n\n");
+        printf("1 - adicionar paciente;\n");
+        printf("2 - remover paciente;\n");
+        printf("3 - adicionar paciente na lista de espera;\n");
+        printf("4 - remover paciente na lista de espera;\n");
+        printf("0 - atender paciente.\n\n");
+
+        int op = get_number("Digite uma opção: ");
+
+        if (op == 1)
+        {
+            if (q->size + i == q->size_max)
+            {
+                printf("\n----- A FILA ESTÁ CHEIA PARA HOJE -----\n\n");
+            }
+            else
+            {
+                int n;
+
+                while (1)
+                {
+                    printf("\n\nVocê pode adicionar até %d paciente(s)!\n", q->size_max - (i + q->size));
+                    n = get_number("Digite o número de paciente que deseja adicionar na fila: ");
+
+                    if ((n < 0) || ( n > (q->size_max - (i + q->size) ) ))
+                    {
+                        printf("\n-----ERRO----\n\n1 - O sistema não aceita número negativo;\n");
+                        printf("2 - O sistema pode adicionar apenas %d paciente(s).", q->size_max - (i + q->size));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (n != 0)
+                {
+                    inserir_paciente(q, aux, i, n, 1);
+                    
+                    print_queue(q);
+                    print_prioridade(q);
+                }
+            }
+
+        }
+        else if (op == 2)
+        {
+            if (q->size == 0)
+            {
+                printf("\n-----ERRO----\n\nA fila está vazia!\n");
+            }
+            else
+            {
+                int n;
+
+                while (1)
+                {
+                    printf("\n\nVocê pode adicionar até %d paciente(s)!\n", q->size);
+                    n = get_number("Digite o número de paciente que deseja remover na fila: ");
+
+                    if (n < 0 || n > q->size)
+                    {
+                        printf("\n-----ERRO----\n\n1 - O sistema não aceita número negativo;\n");
+                        printf("2 - O sistema pode remover apenas %d paciente(s).", q->size);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                remover_paciente(q, n);
+
+                if (q->size != 0)
+                {
+                    print_queue(q);
+                    print_prioridade(q);
+                }                
+            }
+            
+        }
+        else if (op == 3)
+        {
+            if (aux->size == aux->size_max)
+            {
+                printf("\n----- A LISTA DE ESPERA ESTÁ CHEIA -----\n\n");
+            }
+            else
+            {
+                int n;
+
+                while (1)
+                {
+                    printf("\n\nVocê pode adicionar até %d paciente(s)!\n", aux->size_max - aux->size);
+                    n = get_number("Digite o número de paciente que deseja adicionar na lista de espera: ");
+
+                    if (n < 0 || (n > (aux->size_max - aux->size)) )
+                    {
+                        printf("\n-----ERRO----\n\n1 - O sistema não aceita número negativo;\n");
+                        printf("2 - O sistema pode adicionar apenas %d paciente(s).", aux->size_max - aux->size);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                if (n != 0)
+                {
+                    inserir_paciente(q, aux, i, n, 0);
+                    
+                    print_queue(aux);
+                    print_prioridade(aux);
+                }
+            }
+
+        }
+        else if (op == 4)
+        {
+            if (aux->size == 0)
+            {
+                printf("\n-----ERRO----\n\nA lista de espera está vazia!\n");
+            }
+            else
+            {
+                int n;
+
+                while (1)
+                {
+                    printf("\n\nVocê pode remover até %d paciente(s)!\n", aux->size);
+                    n = get_number("Digite o número de paciente que deseja remover na fila: ");
+
+                    if (n < 0 || n > aux->size)
+                    {
+                        printf("\n-----ERRO----\n\n1 - O sistema não aceita número negativo;\n");
+                        printf("2 - O sistema pode remover apenas %d paciente(s).", aux->size);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                remover_paciente(aux, n);
+
+                if (aux -> size != 0)
+                {
+                    print_queue(aux);
+                    print_prioridade(aux);
+                }
+            }
+
+        }
+        else if (op == 0)
+        {
+            return;
+        }
+        else
+        {
+            printf("\n-----ERRO----\n\n Digite um valor valido do menu -> 1, 2, 3, 4 ou 0\n");
+        }
+
+    }
+
 
 }
 
@@ -397,22 +511,48 @@ int main()
 
     while (1)
     {
-        printf("\n-------- INICIO DO EXPEDIENTE -------\n");
+        printf("\n----------INICIO DO EXPEDIENTE---------\n");
+        
+        if (q->size != 0)
+        {
+            printf("\n-------- FILA PARA HOJE -------\n\n");
+            
+            for (int i = 0; i < q->size_max; i++)
+            {
+                if (q->array[i] != -1)
+                {
+                    printf("Consulta %d - Pessoa com %d ano(s), prioridade %d\n", i + 1, q->array[i], prioridade(q->array[i]));
+                }
+                else
+                {
+                    printf("Consulta %d - sem paciente!\n", i + 1);
+                }
+            }
+            
+            printf("\n");
+
+        }
+        else
+        {
+            printf("\n-------- FILA PARA HOJE ESTÁ VAZIA -------\n");
+        }
+
         int array[16];
 
         for (int i = 0; i < 16; i++)
         {
-            inserir_paciente(q, aux, i);
-            int idade = dequeue(q);
+            menu(q, aux, i);
 
+            int idade = dequeue(q);
             array[i] = idade;
+
             if (idade == -1)
             {
-                printf("\n---- %d consulta: sem paciente ----\n", i + 1);
+                printf("\n---- Consulta %d: sem paciente ----\n", i + 1);
             }
             else
             {
-                printf("\n---- %d consulta: pessoa tem %d anos ----\n", i + 1, idade);
+                printf("\n---- Consulta %d: pessoa tem %d anos ----\n", i + 1, idade);
                 printf("\n");
                 
                 if (i + 1 < 16 && q->size != 0)
@@ -421,52 +561,51 @@ int main()
                     print_prioridade(q);
                 }
             }
-
-            if (i + 1 < 16)
-                remover_paciente(q);
-            
         }
 
         printf("\n----FIM DO EXPEDIENTE----\n");
 
+        //atendimento do dia!
         printf("\n------ FILA HOJE -----\n\n");
+
         for (int i = 0; i < 16; i++)
         {
             if (array[i] == -1)
             {
-                printf("Paciente %d: não houve\n", 1 + 1);
+                printf("Paciente %d: não houve atendimento!\n", i + 1);
             }
             else
             {
                 printf("Paciente %d: %d ano(s)\n", i + 1, array[i]);
             }
         }
+
         printf("\n");
         
-
+        //esvaziando a fila
         for (int i = 0; i < q->size_max; i++)
             q->array[i] = -1;
 
+        //organizar a fila para amanhã
         if (aux->size != 0)
         {
-            printf("\n---- FILA PARA AMANHÃ ----\n");
-            print_queue(aux);
+            printf("\n---- PREPARAR A FILA DE AMANHÃ ----\n");
 
             int n = -1;
 
             while (1)
             {
-                printf("\nDigite 0 caso não queria adicionar nenhum paciente da lista de espera!\n");
-                printf("Escolha entre 1 a 4 pacientes para amanhã: ");
-                scanf("%d", &n);
+                printf("\n\n%d paciente(s) na lista de espera!\n\n", aux->size);
+                n = get_number("Escolha a quantidade para adicionar na fila de amanhã: ");
 
-                if (n > 0 && n < 5)
+                if (n >= 0 && n <= aux->size && n <= 16)
                 {
                     break;
                 }
                 else
                 {
-                    printf("\n-----ERRO----\n\nO sistema pede um intervalo de 0 até no maximo 4!\n");
+                    printf("\n-----ERRO----\n\n1 - O sistema possui %d paciente(s);\n", aux->size);
+                    printf("2 - A fila pode ter no máximo 16 pacientes!\n");
                 }
             }
             
@@ -475,13 +614,15 @@ int main()
                 int op = 0;
 
                 printf("\n----- LISTA DE PESSOAS PARA OUTRO DIA -----\n");
+                
                 while (1)
                 {
                     for (int k = 0; k < aux->size; k++)
                         printf("Pessoa %d: %d anos -> prioridade: %d\n", k + 1, aux->array[k], prioridade(aux->array[k]));
 
-                    printf("Digite informe o numero da pessoa na fila: ");
-                    scanf("%d", &op);
+                    printf("\n");
+
+                    op = get_number("Digite informe o numero da pessoa na fila: ");
 
                     if (op > 0 && op <= aux->size)
                     {
@@ -497,21 +638,20 @@ int main()
                 
                 if (enqueue(idade, q))
                 {
-                    printf("\n---- Adicionado para amanhã -----\n");
-                    print_queue(q);
+                    printf("\n---- PACIENTE ADICIONADO PARA AMANHÃ -----\n");
                 }
                 else
                 {
-                    printf("\n---- FILA ESTA CHEIA -----\n");
+                    printf("\n---- ERRO AO ADICIONAR PACIENTE PARA AMANHÃ -----\n");
                 }
                 
             }
             
-
         }
-        
-        if (aux->size == 0)
-            printf("\n----- LISTA DE ESPERA VAZIA -----\n");
+        else
+        {
+            printf("\n----- LISTA DE ESPERA ESTÁ VAZIA -----\n");
+        }
     }
 
     return 0;

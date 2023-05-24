@@ -1,132 +1,179 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-typedef struct node
-{
-    int elem;
-    struct node *next;
-} node;
+typedef struct elevador {
+	int corredor;
+	int andar;
+} elevador;
 
-int is_empty_list (node *head)
+int get_number(char *string)
 {
-    return (int) (head == NULL);
-}
+    int num = 0;
 
-void add_node (node **head, int elem)
-{
-    node *new_node = (node *) malloc(sizeof(node));
-    
-    if (is_empty_list(new_node))
+    while (1)
     {
-        printf("Erro na alocação de memória\n");
-        exit(1);
-    }
+        char input[100];
+        printf("%s", string);
+        scanf(" %[^\n]s", input);
 
-    new_node->elem = elem;
-    new_node->next = NULL;
+        int erro = 0, i = 0;
 
-    if (is_empty_list(*head))
-    {
-        *head = new_node;
-    }
-    else
-    {
-        node *aux = *head;
-        
-        while (aux->next != NULL)
-            aux = aux->next;
-
-        aux->next = new_node;
-    }
-}
-
-int search (node *head, int elem)
-{
-    while (head != NULL && head->elem != elem)
-        head = head->next;
-
-    return !is_empty_list(head);
-}
-
-void remove_node (node **head, int elem)
-{
-    if (search(*head, elem))
-    {
-        node *aux      = *head;
-        node *previous = NULL;
-
-        while (aux != NULL && aux->elem != elem)
+        while (input[i] != '\0')
         {
-            previous = aux;
-            aux = aux->next;
+            if (input[i] == '0' ||
+                input[i] == '1' ||
+                input[i] == '2' ||
+                input[i] == '3' ||
+                input[i] == '4' ||
+                input[i] == '5' ||
+                input[i] == '6' ||
+                input[i] == '7' ||
+                input[i] == '8' ||
+                input[i] == '9')
+            {
+                num = (num * 10) + ((int)input[i]) % 48;
+                i += 1;
+            }
+            else
+            {
+                erro = 1;
+                break;
+            }
         }
 
-        if (is_empty_list(previous))
+        if (erro)
         {
-            (*head) = (*head)->next;
+            printf("\n----- ERRO -----\n");
+            printf("Entrada invalida, digite apenas números\n\n");
         }
         else
         {
-            previous->next = aux->next;
-
-            aux->next = NULL;
-            free(aux);
+            break;
         }
-        
     }
-    else
-    {
-        printf("Elemento não pertence a lista!\n");
-    }
+
+    return num;
 }
 
-void print_list (node *head)
+void elevador_mais_prox(int posicao[3][300], int andar_esperado, int corredor_esperado, int posicao_elevador[][2])
 {
-    if (is_empty_list(head))
-    {
-        printf("Lista está vazia\n");
-        return;
-    }
-    
-
-    while (!is_empty_list(head))
-    {
-        if (is_empty_list(head->next))
-        {
-            printf("%d\n", head->elem);
-        }
-        else
-        {
-            printf("%d ", head->elem);
-        }
-
-        head = head->next;
-    }
-    
+    int array[15] = 0;
 }
 
-int main ()
+int main()
 {
-    node *head = NULL;
+    int posicao[300][3] = {0};
+    elevador elevadores[15];
+    
+    elevadores[0]->corredor = 0;
+    elevadores[0]->andar = 0;
+    elevadores[1]->corredor = 0;
+    elevadores[1]->andar = 10;
+	
+	for (int i = 0; i < 300; i++)
+		for (int j = 0; j < 3; j++)
+			posicao[i][j] = 0;
+		
+	for (int i = 0; i < 15; i++)
+		posicao[elevadores[i]->andar][elevadores[i]->corredor] = 1;
+	
+			
 
-    add_node(&head, 10);
-    add_node(&head, 20);
-    add_node(&head, 30);
-    add_node(&head, 40);
+    while (1)
+    {
+        int qtd = get_number("Informe a quantidade de passageiros: ");
+        int init;
 
-    print_list(head);
+        while (1)
+        {
+            init = get_number("Qual andar vocês estão: ");
 
-    remove_node(&head, 2);
-    remove_node(&head, 20);
-    print_list(head);
-    remove_node(&head, 40);
-    print_list(head);
-    remove_node(&head, 10);
-    print_list(head);
-    remove_node(&head, 30);
-    remove_node(&head, 4);
+            if (init <= 0 || init >= 301)
+            {
+                printf("\n---- ERRO ----\n");
+                printf("Andar informado não existe, intervalo de 1 até 300\n\n");
+            }
+            else
+            {
+                init -= 1;
+                break;
+            }
+        }
 
-    print_list(head);
+        while (qtd != 0)
+        {
+
+            int corredor;
+
+            while (1)
+            {
+                corredor = get_number("Informe o numero do corredor: ");
+                
+                if (init <= 0 || init >= 4)
+                {
+                    printf("\n---- ERRO ----\n");
+                    printf("Os corredores tem apenas esses valores: 1, 2 ou 3\n\n");
+                }
+                else
+                {
+                    corredor -= 1;
+                    break;
+                }
+            }
+
+            int qtd_elevador = 0;
+            while (1)
+            {
+                qtd_elevador = get_number("Informe a quantidade de passageiros que vai entrar no elevador: ");
+                
+                if (qtd_elevador <= 0 || qtd_elevador > qtd)
+                {
+                    printf("\n---- ERRO ----\n");
+                    printf("Os corredores tem apenas esses valores: 1, 2 ou 3\n\n");
+                }
+                else
+                {
+                    break;
+                }
+            }
+            
+            int end;
+            while (qtd_elevador != 0)
+            {
+                end = get_number("Qual andar vocês desejam ir: ");
+                
+                if (end <= 0 || end >= 301)
+                {
+                    printf("\n---- ERRO ----\n");
+                    printf("Andar informado não existe, intervalo de 1 até 300\n\n");
+                }
+                else
+                {
+                    end -= 1;
+                    break;
+                }
+
+                int saiu_do_elevador;
+                while (1)
+                {
+                    saiu_do_elevador = get_number("Quantos sairam do elevador: ");
+
+                    if (saiu_do_elevador < 0 || saiu_do_elevador > qtd_elevador)
+                    {
+                        printf("\n---- ERRO ----\n");
+                        printf("Quantidade de passageiros invalido, intervalo de 0 até %d\n\n", qtd_elevador);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+
+                qtd_elevador -= saiu_do_elevador;
+            }
+            
+        }
+    }
 
     return 0;
 }

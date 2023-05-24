@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// Este programa falta tratamento da entrada, reconhecer apenas números
+// Organização da fila e lista de espera
+// Falta um menu para o usuario
+
 typedef struct queue
 {
     int *array;

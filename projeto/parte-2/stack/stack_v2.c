@@ -51,7 +51,7 @@ int get_number(char *string)
         if (erro)
         {
             printf("\n----- ERRO -----\n");
-            printf("Entrada invalida, digite apenas números\n\n");
+            printf("Entrada invalida, digite apenas números positivos ou zero\n\n");
         }
         else
         {
