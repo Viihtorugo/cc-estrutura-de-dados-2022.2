@@ -270,9 +270,9 @@ int bfs_count (graph *g, int v, int d)
 
         count += 1;
 
-        //printf("\nFila: ");
-        //print_queue(q);
-        //printf("\n");
+        printf("\nFila: ");
+        print_queue(q);
+        printf("\n");
 
     }
 
