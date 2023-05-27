@@ -2,6 +2,15 @@
 #include <stdlib.h>
 #include <time.h>
 
+/* 
+    VERSÃO CORRIGIDA
+    
+	1 - Saída final -> Empate ou jogador X ganhou
+	2 - Adicionado a função srand(time(NULL)) para número aleatórios
+	3 - Função de entrada para tratamento get_number()
+	4 - Tratamento de erro, considerando um baralho com 4 naipes e 52 cartas
+*/
+
 typedef struct stack
 {
     int elem;

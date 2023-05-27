@@ -1,6 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+/* 
+	VERSÃO EM SALA
+
+	1 - Erro ao informar o vencedor, além de não considerar empate!
+	2 - Número aleatório com a função viciada
+	3 - Falta de tratamento nas entradas
+	4 - Falta de tratamento de erro 
+*/
+
 typedef struct stack {
 	int elem;
 	struct stack *next;

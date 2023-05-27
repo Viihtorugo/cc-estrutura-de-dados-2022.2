@@ -102,6 +102,83 @@ int count_no_tree (tree *root, int count)
     return count;
 }
 
+tree *find_parent_a (tree *root, tree *a)
+{
+    if (root != NULL)
+        return root;
+    
+    if (root->elem != a->elem)
+    {
+        root->first_child = find_parent_a(root->first_child, a);
+        root->next_parent = find_parent_a(root->next_parent, a);
+
+        return root;
+    }
+    else
+    {
+        return root;
+    }
+}
+
+tree *remove_tree (tree *root_a, tree *parent, tree *a, tree *b, tree *forest[], int *index)
+{
+    if (a == NULL)
+        return a;
+
+    a->first_child = remove_tree (root_a, a, a->first_child, b, forest, index);
+    a->next_parent = remove_tree (root_a, a, a->next_parent, b, forest, index);
+
+    if (a->elem == b->elem)
+    {
+        forest[*index] = find_parent_a (root_a, parent);
+        *index += 1;
+
+        parent->first_child = NULL;
+        parent->next_parent = NULL
+    }
+    
+    return a;
+}
+
+tree *create_tree_intersection (tree *a, tree *b, tree *i)
+{
+    if (a == NULL)
+        return i;
+
+    if (a != NULL && b == NULL)
+        return i;
+
+    if (a->elem == b->elem)
+    {
+        tree *new_root = (tree *) malloc (sizeof(tree));
+        new_root->elem = a->elem;
+        i = new_root;
+
+        i->first_child = create_tree_intersection(a->first_child, b->first_child, i->first_child);
+        i->next_parent = create_tree_intersection(a->next_parent, b->next_parent, i->next_parent);
+
+    }
+    
+    return i;
+}
+
+tree **intersection (tree *a, tree *b, tree *forest[], int *index)
+{
+    if (a == NULL)
+        return forest;
+
+
+    tree **aux = intersection(a->first_child, b, forest, index);
+    tree **aux = intersection(a->next_parent, b, forest, index);
+
+    if (a->elem == b->elem)
+    {
+        forest[*index] = create_tree_intersection (a, b, forest[*index]);
+        *index += 1;
+    }
+
+    return aux;
+}
 
 tree *union_tree (tree *a, tree *b, tree *u)
 {

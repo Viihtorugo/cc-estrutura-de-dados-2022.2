@@ -1,5 +1,5 @@
-list_linked:
-	gcc list/list.c -o bin/list && ./bin/list
+list_v1:
+	gcc list/list_v1.c -o bin/list_v1 && ./bin/list_v1
 queue_v1:
 	gcc queue/queue_v1.c -o bin/queue_v1 && ./bin/queue_v1
 queue_v2:

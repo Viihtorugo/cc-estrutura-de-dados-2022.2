@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Tratamento de erro -> get_number()
-// Refatorado a parte da orgnização da fila e da lista
-// Criado o menu para o usuario
+/* 
+    VERSÃO CORRIGIDA
+
+    1 - Tratamento de entrada -> get_number(); além de tratamento de erro!
+    2 - Reoganização da fila e lista de espera
+    3 - Menu para o usuario criado!
+*/
 
 int get_number(char *string)
 {

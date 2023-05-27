@@ -1,9 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Este programa falta tratamento da entrada, reconhecer apenas números
-// Organização da fila e lista de espera
-// Falta um menu para o usuario
+/* 
+    VERSÃO SALA DE AULA
+
+    1 - Este programa falta tratamento da entrada e tratamento de erros
+    2 - Organização da fila e lista de espera
+    3 - Falta um menu para o usuario
+*/
 
 typedef struct queue
 {
